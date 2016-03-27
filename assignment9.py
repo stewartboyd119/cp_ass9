@@ -61,6 +61,8 @@ def normalizeImage(img):
     """
     # We initialize this as float since you will do arithmetic computation.
     out = np.zeros(img.shape, dtype=np.float)
+    out = img - min(img)
+    out *= 255./max(out)
     # WRITE YOUR CODE HERE.
 
 
@@ -97,7 +99,7 @@ def linearWeight(pixel_value):
     weight = 0.0
 
     # WRITE YOUR CODE HERE.
-
+    weight = pizel_range_max - pixel_value if pixel_value > pixel_range_mid else np.float(pixel_value)
 
 
 
@@ -141,9 +143,11 @@ def getYXLocations(image, intensity_value):
     """
     # WRITE YOUR CODE HERE.
 
+    indexes = numpy.where(image == intensity_value)
+    x_locs = indexes[:, 0]
+    y_locs = indexes[:, 1]
+    return y_locs, x_locs
 
-
-    
     # END OF FUNCTION
 
 def computeResponseCurve(pixels, log_exposures, smoothing_lambda,
@@ -227,9 +231,11 @@ def computeResponseCurve(pixels, log_exposures, smoothing_lambda,
     idx_ctr = 0  # index counter
     for i in xrange(pix_range):
         for j in xrange(num_images):
-            wij = weighting_function(pixels[i, j])
+            wij = weighting_function()
             # PART 1: WRITE YOUR CODE HERE
-
+            mat_A[idx_ctr, pixels[i, j]] = wij
+            mat_A[idx_ctr pix_range + i] = -wij
+            mat_b[idx_ctr, 0] = log_exposures[j]
 
 
 
@@ -251,7 +257,7 @@ def computeResponseCurve(pixels, log_exposures, smoothing_lambda,
 
     # PART 2: WRITE YOUR CODE HERE
 
-
+    x = (mat_A ^ -1).dot(b)
 
 
     # STOP WRITING CODE HERE.
